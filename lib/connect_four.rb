@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require_relative 'players'
+require_relative 'pieces'
 
 # class to contain game board, and verticies for piece graphs.
 class Game
@@ -51,6 +52,7 @@ class Game
   def place_piece(input, player, board = @board)
     i = 1 # will always start with second row, as valid_input? checks if top row is full
     loop do
+      break if i == 7 # we've reached the bottom, row 8 doesn't exist.
       break if board[i][input - 1] != '_'
 
       i += 1
