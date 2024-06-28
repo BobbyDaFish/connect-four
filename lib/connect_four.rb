@@ -15,6 +15,7 @@ class Game
               %w[_ _ _ _ _ _ _]]
     @player1 = new_player(1)
     @player2 = new_player(2)
+    @pieces = {}
   end
 
   def new_player(player_num)
@@ -57,6 +58,11 @@ class Game
 
       i += 1
     end
+    create_piece(player, [i - 1][input - 1])
     @board[i - 1][input - 1] = player.player_icon
+  end
+
+  def create_piece(player, coords)
+    @pieces[coords.to_s] = Pieces.new(player, coords)
   end
 end

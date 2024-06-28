@@ -100,4 +100,19 @@ describe Game do
       end
     end
   end
+
+  describe '#create_piece' do
+    context 'Create a new piece object' do
+      before do
+        coords = [6][3]
+        player = game.instance_variable_get(:@player2)
+        allow(game).to receive(:create_piece).with(player, coords)
+      end
+
+      it 'creates piece' do
+        expect(game).to receive(:create_piece).and_return(Hash)
+        game.create_piece
+      end
+    end
+  end
 end
