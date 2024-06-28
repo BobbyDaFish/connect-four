@@ -2,6 +2,7 @@
 
 require_relative 'players'
 require_relative 'pieces'
+require 'pry-byebug'
 
 # class to contain game board, and verticies for piece graphs.
 class Game
@@ -32,8 +33,7 @@ class Game
   end
 
   def valid_play?(play, board = @board)
-    return play if play.match?(/[1-7]/)
-    return play if board[0][play - 1] == '_'
+    return play if play.to_s.match?(/[1-7]/) && board[0][play - 1] == '_'
 
     false
   end
@@ -58,11 +58,18 @@ class Game
 
       i += 1
     end
-    create_piece(player, [i - 1][input - 1])
+    create_piece(player, i - 1, input - 1)
     @board[i - 1][input - 1] = player.player_icon
+    @board[i - 1][input - 1]
   end
 
-  def create_piece(player, coords)
-    @pieces[coords.to_s] = Pieces.new(player, coords)
+  def create_piece(player, xcoord, ycoord)
+    @pieces[[xcoord][ycoord]] = Pieces.new(player, xcoord, ycoord)
+  end
+
+  def check_board(player, board = @board)
+    x = 6
+    y = 0
+    @pieces[[x][y]]
   end
 end

@@ -2,7 +2,7 @@
 
 require '../lib/connect_four'
 
-describe Game do
+describe Game do # rubocop:disable Metrics/BlockLength
   subject(:game) { described_class.new }
 
   describe '#initialize' do
@@ -27,61 +27,52 @@ describe Game do
     end
   end
 
-  describe '#valid_play?' do # rubocop:disable Metrics/BlockLength
+  describe '#valid_play?' do
     context 'player submits valid choice' do
-      before do
-        valid_input = '3'
-        allow(game).to receive(:valid_play?).with(valid_input)
-      end
-
       it 'receives valid input and returns that input' do
-        expect(game).to receive(:valid_play?).and_return(3)
-        game.valid_play?
+        valid_input = 3
+        play = game.valid_play?(valid_input)
+
+        expect(play).to be(3)
       end
     end
 
     context 'player submits number to full column' do
-      before do
-        full_column = '3'
-        board_full = [['_', '_', "\u25c6", '_', '_', '_', '_']]
-        allow(game).to receive(:valid_play?).with(full_column, board_full)
-      end
-
       it 'returns false' do
-        expect(game).to receive(:valid_play?).and_return(false)
-        game.valid_play?
+        full_column = 3
+        board_full = [['_', '_', "\u25c6", '_', '_', '_', '_']]
+        invalid = game.valid_play?(full_column, board_full)
+
+        expect(invalid).to be(false)
       end
     end
 
     context 'player submits invalid input' do
-      before do
-        invalid_input = 'b'
-        allow(game).to receive(:valid_play?).with(invalid_input)
-      end
+      # before do
+      #   allow(game).to receive(:valid_play?).with(invalid_input)
+      # end
 
       it 'returns false' do
-        expect(game).to receive(:valid_play?).and_return(false)
-        game.valid_play?
+        bad_input = 'b'
+        invalid = game.valid_play?(bad_input)
+
+        expect(invalid).to be(false)
       end
     end
   end
 
   describe '#place_piece' do
     context 'empty board, first play' do
-      before do
-        valid_play = 3
-        player = game.instance_variable_get(:@player1)
-        allow(game).to receive(:place_piece).with(valid_play, player)
-      end
-
       it 'places piece in row 7' do
-        expect(game).to receive(:place_piece).and_return("\u25c6")
-        game.place_piece
+        player = game.instance_variable_get(:@player1)
+        char = game.place_piece(3, player)
+
+        expect(char).to be(player.player_icon)
       end
     end
 
     context 'bottom row already has a piece' do
-      before do
+      it 'places the piece in row 6' do
         play = 3
         player = game.instance_variable_get(:@player2)
         board = [%w[_ _ _ _ _ _ _],
@@ -91,27 +82,33 @@ describe Game do
                  %w[_ _ _ _ _ _ _],
                  %w[_ _ _ _ _ _ _],
                  ['_', '_', "\u25c6", '_', '_', '_', '_']]
-        allow(game).to receive(:place_piece).with(play, player, board)
-      end
+        game.place_piece(play, player, board)
 
-      it 'places the piece in row 6' do
-        expect(game).to receive(:place_piece).and_return("\u25c9")
-        game.place_piece
+        row_six = game.instance_variable_get(:@board)
+
+        expect(row_six[5][2]).to be("\u25c9")
       end
     end
   end
 
   describe '#create_piece' do
+    let(:new_piece) { instance_double('new_piece') }
     context 'Create a new piece object' do
-      before do
-        coords = [6][3]
-        player = game.instance_variable_get(:@player2)
-        allow(game).to receive(:create_piece).with(player, coords)
-      end
+      # before do
+      #  coords = [6][3]
+      #  player = game.instance_variable_get(:@player2)
+      #  allow(game).to receive(:create_piece).with(player, coords)
+      # end
 
       it 'creates piece' do
-        expect(game).to receive(:create_piece).and_return(Hash)
-        game.create_piece
+        xcoord = 6
+        ycoord = 2
+        player = game.instance_variable_get(:@player2)
+
+        allow(new_piece).to receive(:new).and_return("\u25c9")
+
+        piece = game.create_piece(player, xcoord, ycoord)
+        expect(piece.icon).to be("\u25c9")
       end
     end
   end

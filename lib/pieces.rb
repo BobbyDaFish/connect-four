@@ -2,12 +2,14 @@
 
 # Nodes that contain the coordinates of that played piece, and it's neighbor coordinates
 class Pieces
-  def initialize(player, coords)
+  attr_reader :icon, :coords, :neighbors
+
+  def initialize(player, xcoord, ycoord)
     @icon = player.player_icon
-    @coords = coords
-    @neighbors = [[coords[0] - 1][coords[1] - 1],
-                  [coords[0] - 1][coords[1]],
-                  [coords[0] - 1][coords[1] + 1],
-                  [coords[0]][coords[1] + 1]]
+    @coords = [[xcoord][ycoord]]
+    @neighbors = [[xcoord - 1][ycoord - 1],
+                  [xcoord - 1][ycoord],
+                  [xcoord - 1][ycoord + 1],
+                  [xcoord][ycoord + 1]]
   end
 end
