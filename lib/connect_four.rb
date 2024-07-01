@@ -17,6 +17,11 @@ class Game
     @player1 = new_player(1)
     @player2 = new_player(2)
     @pieces = {}
+    @game_over = false
+    @current_turn = 1
+    @current_player = @player1
+
+    play_game
   end
 
   def new_player(player_num)
@@ -24,7 +29,7 @@ class Game
   end
 
   def display_board
-    puts '1 2 3 4 5 6 7'
+    puts '1 | 2 | 3 | 4 | 5 | 6 | 7'
     i = 0
     until i == 7
       puts @board[i].join(' | ')
@@ -71,7 +76,7 @@ class Game
   def check_board
     xcoord = 6
     ycoord = 0
-    while ycoord < 4 && xcoord.positive?
+    while ycoord <= 6 && xcoord.positive?
       piece_check = @pieces["#{xcoord}, #{ycoord}"] if @pieces.key?("#{xcoord}, #{ycoord}")
       return true if win_check?(piece_check)
 
@@ -83,6 +88,8 @@ class Game
   end
 
   def win_check?(piece, score = 1, direction = nil)
+    return false if piece.nil?
+
     icon = piece.icon
     coords = piece.coords
     neighbors = piece.neighbors
@@ -101,10 +108,37 @@ class Game
       return false unless next_piece.icon == icon
 
       score += 1
+
       return true if score == 4
 
       return win_check?(next_piece, score, direction)
     end
     false
   end
+
+  def play_game
+    puts 'Let\'s play Connect Four!'
+    puts "Player 1 is #{@player1.player_icon}, Player 2 is #{@player2.player_icon}"
+    until @game_over == true
+      display_board
+      puts "Player #{@current_turn}\'s turn!"
+      get_play(@current_player)
+      @game_over = true if check_board == true
+      swap_turn
+    end
+    display_board
+    puts 'Game over!'
+  end
+
+  def swap_turn
+    if @current_turn == 1
+      @current_turn = 2
+      @current_player = @player2
+    else
+      @current_turn = 1
+      @current_player = @player1
+    end
+  end
 end
+
+game = Game.new
