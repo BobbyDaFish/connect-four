@@ -1,6 +1,7 @@
 # frozen-string-literal: true
 
 require '../lib/connect_four'
+require 'pry-byebug'
 
 describe Game do # rubocop:disable Metrics/BlockLength
   subject(:game) { described_class.new }
@@ -94,12 +95,6 @@ describe Game do # rubocop:disable Metrics/BlockLength
   describe '#create_piece' do
     let(:new_piece) { instance_double('new_piece') }
     context 'Create a new piece object' do
-      # before do
-      #  coords = [6][3]
-      #  player = game.instance_variable_get(:@player2)
-      #  allow(game).to receive(:create_piece).with(player, coords)
-      # end
-
       it 'creates piece' do
         xcoord = 6
         ycoord = 2
@@ -108,7 +103,64 @@ describe Game do # rubocop:disable Metrics/BlockLength
         allow(new_piece).to receive(:new).and_return("\u25c9")
 
         piece = game.create_piece(player, xcoord, ycoord)
-        expect(piece.icon).to be("\u25c9")
+        expect(piece["#{xcoord}, #{ycoord}"].icon).to be("\u25c9")
+      end
+    end
+  end
+
+  describe '#check_board' do
+    context 'returns true if win_check? returns true' do
+      before do
+        allow(game).to receive(:win_check?).and_return(true)
+      end
+
+      it 'returns true' do
+        result = game.check_board
+        expect(result).to be true
+      end
+    end
+
+    context 'returns false if win_check? returns false' do
+      before do
+        allow(game).to receive(:win_check?).and_return(false)
+      end
+
+      it 'returns false' do
+        result = game.check_board
+        expect(result).to be false
+      end
+    end
+  end
+
+  describe '#win_check?' do
+    context 'no win condition is present' do
+      it 'returns false' do
+        xcoord = 6
+        ycoord = 2
+        player = game.instance_variable_get(:@player2)
+        piece = game.create_piece(player, xcoord, ycoord)
+        result = game.win_check?(piece['6, 2'])
+        expect(result).to be false
+      end
+
+      # create winning condition check
+      context 'win condition is present' do
+        before do
+          xcoord = 6
+          ycoord = 0
+          player = game.instance_variable_get(:@player2)
+          game.create_piece(player, xcoord, ycoord += 1) until ycoord == 4
+        end
+
+        it 'returns true' do
+          xcoord = 6
+          ycoord = 0
+          player = game.instance_variable_get(:@player2)
+          piece = game.create_piece(player, xcoord, ycoord)
+
+          result = game.win_check?(piece['6, 0'])
+          expect(result).to be true
+        end
       end
     end
   end

@@ -6,10 +6,10 @@ class Pieces
 
   def initialize(player, xcoord, ycoord)
     @icon = player.player_icon
-    @coords = [[xcoord][ycoord]]
-    @neighbors = [[xcoord - 1][ycoord - 1],
-                  [xcoord - 1][ycoord],
-                  [xcoord - 1][ycoord + 1],
-                  [xcoord][ycoord + 1]]
+    @coords = [xcoord, ycoord]
+    @neighbors = [[xcoord - 1, ycoord - 1],
+                  [xcoord - 1, ycoord],
+                  [xcoord - 1, ycoord + 1],
+                  [xcoord, ycoord + 1]]
   end
 end

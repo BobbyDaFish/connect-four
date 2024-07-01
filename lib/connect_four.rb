@@ -64,12 +64,47 @@ class Game
   end
 
   def create_piece(player, xcoord, ycoord)
-    @pieces[[xcoord][ycoord]] = Pieces.new(player, xcoord, ycoord)
+    @pieces.merge!({ "#{xcoord}, #{ycoord}" => Pieces.new(player, xcoord, ycoord) })
   end
 
-  def check_board(player, board = @board)
-    x = 6
-    y = 0
-    @pieces[[x][y]]
+  # returns true if a win condition is found, false if no win condition is found
+  def check_board
+    xcoord = 6
+    ycoord = 0
+    while ycoord < 4 && xcoord.positive?
+      piece_check = @pieces["#{xcoord}, #{ycoord}"] if @pieces.key?("#{xcoord}, #{ycoord}")
+      return true if win_check?(piece_check)
+
+      ycoord += 1
+      ycoord = 0 && xcoord += 1 if ycoord == 7
+
+    end
+    false
+  end
+
+  def win_check?(piece, score = 1, direction = nil)
+    icon = piece.icon
+    coords = piece.coords
+    neighbors = piece.neighbors
+    if direction.nil?
+      neighbors.each do |n_coords|
+        next unless @pieces.key?("#{n_coords[0]}, #{n_coords[1]}")
+
+        next_piece = @pieces["#{n_coords[0]}, #{n_coords[1]}"]
+        next unless next_piece.icon == icon
+
+        return win_check?(next_piece, score += 1, [coords[0] - n_coords[0], coords[1] - n_coords[1]])
+      end
+    elsif @pieces.key?("#{coords[0] - direction[0]}, #{coords[1] - direction[1]}")
+      # when given a direction set as an array ex [-1, 0] use it to do a single check for matching icon.
+      next_piece = @pieces["#{coords[0] - direction[0]}, #{coords[1] - direction[1]}"]
+      return false unless next_piece.icon == icon
+
+      score += 1
+      return true if score == 4
+
+      return win_check?(next_piece, score, direction)
+    end
+    false
   end
 end
