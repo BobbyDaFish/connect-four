@@ -1,7 +1,6 @@
 # frozen-string-literal: true
 
 require '../lib/connect_four'
-require 'pry-byebug'
 
 describe Game do # rubocop:disable Metrics/BlockLength
   subject(:game) { described_class.new }

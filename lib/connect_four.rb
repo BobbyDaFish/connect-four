@@ -2,7 +2,6 @@
 
 require_relative 'players'
 require_relative 'pieces'
-require 'pry-byebug'
 
 # class to contain game board, and verticies for piece graphs.
 class Game
